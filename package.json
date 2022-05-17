@@ -1,0 +1,27 @@
+{
+  "name": "node-js",
+  "version": "1.0.0",
+  "description": "This is a practice folder",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kskrao219/Node-Js.git"
+  },
+  "keywords": [
+    "code"
+  ],
+  "type": "commonjs",
+  "author": "keshav",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kskrao219/Node-Js/issues"
+  },
+  "homepage": "https://github.com/kskrao219/Node-Js#readme",
+  "dependencies": {
+    "colors": "^1.4.0",
+    "simple-node-logger": "^21.8.12"
+  }
+}
