@@ -12,7 +12,7 @@
 import * as fs from 'fs';
 import * as http from 'http';
 //non streaming way
-/*
+
 const server = http.createServer();
 server.on('request',(req,res)=>{
     fs.readFile('file.txt',(err,data)=>{
@@ -23,15 +23,15 @@ server.on('request',(req,res)=>{
     })
 })
 server.listen(8000,"127.0.0.1")
-*/
+
 //streaming way
 /* steps 
 1.reading from a stream 
 2.Create a readable stream
 3.handle stream events --> data end error */
 /*-------------------------------------------------------------------------------------*/
-const server = http.createServer()
-server.on("request", (req, res) => {
+const servers = http.createServer()
+servers.on("request", (req, res) => {
     const rstream = fs.createReadStream("file.txt");
     rstream.on("data", (chunkdata) => {
         res.write(chunkdata);
@@ -40,4 +40,4 @@ server.on("request", (req, res) => {
         res.end();
     });
 });
-server.listen(8000, "127.0.0.1");
+servers.listen(8000, "127.0.0.1");
