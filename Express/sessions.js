@@ -1,11 +1,12 @@
 import express from 'express'
-import web from './routes/web.js'
+import router  from './routes/web.js'
 const app = express();
-const PORT = 8080;
+
+const Port = process.env.PORT || '3000';
 
 //load routes 
-app.get('/',web);
-app.listen(PORT,()=>{
-    console.log(`listening at http://localhost:${PORT}`);
+app.use('/',router);
+app.listen(Port,()=>{
+    console.log(`listening at http://localhost:${Port}`);
     console.log("server is running succesfully");
 });
