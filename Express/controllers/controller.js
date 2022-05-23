@@ -1,6 +1,6 @@
 class controllerclass{
     static get_session_info = (req,res) =>{
-        res.send("session info")
+        res.send("<h1>session info")
     }
 }
 
