@@ -2,11 +2,14 @@ const express = require('express');
 const session = require('express-session')
 const Port = process.env.PORT || '3000';
 const app = express();
+const bodyParser = require('body-parser');
 const TWO_HOURS = 1000 * 60 * 60 * 2;
 const users = [
-    {id : 1,name : "keshav",password : "secret1"},
-    {id : 2,name : "ramesh",password : "secret2"},
+    {id:1,name:'keshav',email:'kskra@gmail.com',password:"secret1"}
 ]
+app.use(bodyParser.urlencoded({
+    extended: true,
+}))
 app.use(session({
     name: "Auth session",
     secret: "DRSMOM",
@@ -18,29 +21,51 @@ app.use(session({
         secure: false
     }
 }));
-
+const redirectLogin = (req,res,next) => {
+    if(!req.session.userId){
+        res.redirect('/login')
+    }
+    else {
+        next();
+    }
+}
+const redirectHome = (req,res,next) => {
+    if(req.session.userId){
+        res.redirect('/home')
+    }
+    else {
+        next();
+    }
+}
 app.get('/', (req, res) => {
-    const userId = 0;
+    const {userId} = req.session;
     console.log(userId);
     console.log(req.session);
-        res.send(`<h1>Welcome!</h1>
-        ${ userId ?
-        `<a href = "/home">home</a>
+    res.send(`<h1>Welcome!</h1>
+        ${userId ?
+            `<a href = "/home">home</a>
         <form action="/logout" method = 'post'>
             <button>logout</button>
         </form>`
-        :
-        `<a href='/login'>Login</a>
+            :
+            `<a href='/login'>Login</a>
         <a href='/register'>register</a>`
         }
         `)
     res.end();
 })
-app.get('/home', (req, res) => {
+app.get('/home',redirectLogin, (req, res) => {
+    res.send(`<h1>Home</h1>
+    <a href = '/'> Main</a>
+    <ul> 
+    <li>Name : </li>
+    <li>Email : </li>
+    </ul> 
+    `)
 
 })
-app.get('/login', (req, res) => {
- res.send(`<h1>Login</h1>
+app.get('/login',redirectHome, (req, res) => {
+    res.send(`<h1>Login</h1>
  <form method = "post"  action="/login">
      <input type="email" name="email" placeholder="enter email" required/>
      <input type="password" name="password" placeholder="enter password" required/>
@@ -48,9 +73,9 @@ app.get('/login', (req, res) => {
  </form>
  <a href='/register'>Register</a>
  `)
- res.end()
+    // res.end()
 })
-app.get('/register', (req, res) => {
+app.get('/register',redirectHome, (req, res) => {
     res.send(`<h1>Register</h1>
     <form method = "post"  action="/register">
     <input type="text" name="name" placeholder="enter name" required/>
@@ -62,14 +87,48 @@ app.get('/register', (req, res) => {
     `)
     res.end()
 })
-app.post('/login', (req, res) => {
-    
+app.post('/login',redirectHome, (req, res) => {
+    const {email,password} = req.body;
+    if(email && password ){
+        const user = users.find((element )=>{
+            element.email === email && user.password === password;
+        })
+        if(user){
+            req.session.userId = user.id;
+            return res.redirect('/home');
+        }
+    }
+    res.redirect('/login')
 })
-app.post('/register', (req, res) => {
+app.post('/register',redirectHome, (req, res) => {
+    const {name,email,password} = req.body;
 
+    if(name && email && password){
+        const exists = users.some(
+            (user) => user.email === email 
+        )
+        if(!exists){
+            const user = {
+                id : users.length + 1,
+                name,
+                email,
+                password
+            }
+            users.push(user)
+            req.session.userId = user.id;
+            return res.redirect('/home');
+        }
+    }
+    res.redirect('/register')
 })
-app.post('/logout', (req, res) => {
-
+app.post('/logout',redirectLogin, (req, res) => {
+  req.session.destroy(function(err){
+      if(err){
+          return res.redirect('/home');
+      }
+      return res.clearCookie(req.session.name)
+      res.redirect('/login')
+  })
 })
 app.listen(Port, () => {
     console.log(`listening at : http://localhost:${Port}`);
