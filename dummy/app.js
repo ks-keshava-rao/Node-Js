@@ -55,12 +55,22 @@ app.get('/', (req, res) => {
         `)
     res.end();
 })
+app.use((req,res,next)=>{
+    const {userId} = req.session;
+    if(userId){
+        res.locals.user = users.find((user)=>{
+            return user.id === userId;
+        })
+    }
+    next();
+})
 app.get('/home',redirectLogin, (req, res) => {
+    const {user} = res.locals;
     res.send(`<h1>Home</h1>
     <a href = '/'> Main</a>
     <ul> 
-    <li>Name : </li>
-    <li>Email : </li>
+    <li>Name :${user.name} </li>
+    <li>Email :${user.email} </li>
     </ul> 
     `)
 })
@@ -131,7 +141,7 @@ app.post('/logout',redirectLogin, (req, res) => {
         if(err){
             return res.redirect('/home');
         }
-        return res.clearCookie(req.session.name)
+        res.clearCookie(req.session.name)
         res.redirect('/login')
     })
   })
