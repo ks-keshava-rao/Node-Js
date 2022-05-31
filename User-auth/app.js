@@ -141,7 +141,7 @@ app.post('/logout',redirectLogin, (req, res) => {
         if(err){
             return res.redirect('/home');
         }
-        res.clearCookie(req.session.name)
+        res.clearCookie('Auth dsession')
         res.redirect('/login')
     })
   })
