@@ -41,7 +41,7 @@ const redirectHome = (req,res,next) =>{
 app.get('/', (req, res) => {
     const {userId} = req.session;
     console.log(userId);
-    console.log(req.session);
+    console.log(req.session);//how session is attached to req , multiple middlewares
     res.send(`<h1>Welcome!</h1>
         ${userId ?
             `<a href = "/home">home</a>
